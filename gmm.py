@@ -98,5 +98,5 @@ ax.plot(num_components_x, train_accuracy, color = "orange", label = "Training Ac
 ax.plot(num_components_x, valid_accuracy, color = "blue", label = "Validation Accuracy")
 ax.set_xlabel("Number of Components")
 ax.set_ylabel("Accuracy")
-ax.legend();
+ax.legend()
 plt.show()

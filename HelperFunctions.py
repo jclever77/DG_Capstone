@@ -12,7 +12,7 @@ def cartesianToSpherical(cartesianCoordinate):
 
     rho = np.sqrt(x**2 + y**2 + z**2)
     theta = np.arccos(z / rho)
-    phi = np.arctan2(y, x)
+    phi = np.arctan2(y, x) + np.pi     # pi added to move range from (-pi, pi) to (0, 2 * pi)
     return np.array([rho, theta, phi])
 
 def sphericalToCartesian(sphericalCoordinate):
@@ -44,16 +44,15 @@ def getFeatureVector(landmark):
     # And we want to rotate our image along the phi-axis, so that the angle of the left shoulder is π/2 = 90°.
     # This means that the angle of the right shoulder, since our center location is halfway between, should be 3π/2 = 180°.
     LEFT_SHOULDER_COORD = cartesianToSpherical(getLocation(landmark, 11) - CHEST_LOCATION_CARTESIAN)
-    PHI_ADJUSTMENT = np.array([0., 0., (np.pi / 2) - LEFT_SHOULDER_COORD[2]])
+    PHI_ADJUSTMENT = (np.pi / 2) - LEFT_SHOULDER_COORD[2]
     
     # We don't care about head locations aside from the nose, so here are the indexes we care about.
     indexesToUse = [0, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
     formattedRow = np.empty(0)
     for index in indexesToUse:
         # Let's get the two angles mod 2π.
-        newTriple = cartesianToSpherical(getLocation(landmark, index) - CHEST_LOCATION_CARTESIAN) + PHI_ADJUSTMENT
-        newTriple[1] = newTriple[1] % (2 * np.pi)
-        newTriple[2] = newTriple[2] % (2 * np.pi)
+        newTriple = cartesianToSpherical(getLocation(landmark, index) - CHEST_LOCATION_CARTESIAN)
+        newTriple[2] = np.mod(newTriple[2] + PHI_ADJUSTMENT, 2 * np.pi)
         formattedRow = np.append(formattedRow, newTriple)
     return formattedRow
 
@@ -149,6 +148,6 @@ def plot(fv):
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("z")
-    ax.view_init(azim = 180, elev = 0, roll = 0)
+    ax.view_init(azim = 180, elev = 0)
     ax.set_box_aspect(aspect = (1,1,1))
     plt.show()
