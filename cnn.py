@@ -54,6 +54,5 @@ class CNN(nn.Module):
 
     def forward(self, x):
         x = self.convs(x)
-        print(x.shape)
 
         return self.fc(x)
