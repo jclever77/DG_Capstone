@@ -6,6 +6,7 @@ import torch
 from cnn import CNN
 from yoga_dataset import YogaDataset
 from torch.utils.data import DataLoader
+from sklearn.metrics import balanced_accuracy_score
 
 
 def evaluate():
@@ -49,7 +50,8 @@ def evaluate():
             
             val_out = model(val_inp)
             pred_class = val_out.argmax(dim=1)
-            val_acc = (pred_class == val_targ).sum() / val_inp.shape[0]
+            # val_acc = (pred_class == val_targ).sum() / val_inp.shape[0]
+            val_acc = balanced_accuracy_score(val_targ, pred_class)
 
     print(f'Validation accuracy = {val_acc:.4f}')
 
@@ -61,6 +63,7 @@ def evaluate():
             
             test_out = model(test_inp)
             pred_class = test_out.argmax(dim=1)
-            test_acc = (pred_class == test_targ).sum() / test_inp.shape[0]
+            # test_acc = (pred_class == test_targ).sum() / test_inp.shape[0]
+            test_acc = balanced_accuracy_score(test_targ, pred_class)
 
     print(f'Test accuracy = {test_acc:.4f}')    
