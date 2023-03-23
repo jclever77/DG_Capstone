@@ -45,10 +45,8 @@ class CNN(nn.Module):
         )
 
         self.fc = nn.Sequential(
-            *[
             nn.Flatten(),
             nn.Linear(23 * channels[-1], 82)
-            ]
         )
 
 
