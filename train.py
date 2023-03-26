@@ -2,6 +2,7 @@
 
 import os
 from cnn import CNN
+from fc import FC
 from yoga_dataset import YogaDataset
 import config
 # import tqdm
@@ -9,6 +10,7 @@ import torch
 from torch import nn
 from torch import optim
 from torch.utils.data import DataLoader
+from sklearn.metrics import balanced_accuracy_score
 
 
 def train(train_loader, val_loader, model, optimizer, loss_func):
@@ -39,7 +41,8 @@ def train(train_loader, val_loader, model, optimizer, loss_func):
             val_out = model(val_inp)
             val_loss = loss_func(val_out, val_targ).item()
             pred_class = val_out.argmax(dim=1)
-            val_acc = (pred_class == val_targ).sum() / val_inp.shape[0]
+            # val_acc = (pred_class == val_targ).sum() / val_inp.shape[0]
+            val_acc = balanced_accuracy_score(val_targ, pred_class)
 
     return run_loss / len(train_loader), val_loss, val_acc
 
@@ -65,7 +68,7 @@ def main():
     )
 
     if config.MODEL == 'fc':
-        model = None
+        model = FC([69, 128, 256, 512])
     elif config.MODEL == 'cnn':
         model = CNN([3, 16, 32, 64])
 
@@ -75,6 +78,7 @@ def main():
 
     # begin training loop
     print('Training started!!')
+    print(f'Model type = {config.MODEL}')
     best_model = None
     best_val_acc = 0
 

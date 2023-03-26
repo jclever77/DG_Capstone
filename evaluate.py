@@ -4,14 +4,15 @@ import os
 import config
 import torch
 from cnn import CNN
+from fc import FC
 from yoga_dataset import YogaDataset
 from torch.utils.data import DataLoader
 from sklearn.metrics import balanced_accuracy_score
 
 
-def evaluate():
+def evaluate(model_type):
     # instantiate val and test data loaders
-    val_dataset = YogaDataset('val_data', config.MODEL)
+    val_dataset = YogaDataset('val_data', model_type)
     val_loader = DataLoader(
         val_dataset,
         batch_size=len(os.listdir('val_data')),
@@ -20,7 +21,7 @@ def evaluate():
         num_workers=config.NUM_WORKERS
     )
 
-    test_dataset = YogaDataset('test_data', config.MODEL)
+    test_dataset = YogaDataset('test_data', model_type)
     test_loader = DataLoader(
         test_dataset,
         batch_size=len(os.listdir('test_data')),
@@ -30,14 +31,14 @@ def evaluate():
     )
 
     # load in model weights
-    if config.MODEL == 'fc':
-        pass
-    elif config.MODEL == 'cnn':
+    if model_type == 'fc':
+        model = FC([69, 128, 256, 512])
+    elif model_type == 'cnn':
         model = CNN([3, 16, 32, 64])
 
     model.load_state_dict(
         torch.load(
-        f'pytorch_models/{config.MODEL}/model.pth.tar',
+        f'pytorch_models/{model_type}/model.pth.tar',
         config.DEVICE
         )
     )
