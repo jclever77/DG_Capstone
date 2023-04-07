@@ -41,7 +41,6 @@ def train(train_loader, val_loader, model, optimizer, loss_func):
             val_out = model(val_inp)
             val_loss = loss_func(val_out, val_targ).item()
             pred_class = val_out.argmax(dim=1)
-            # val_acc = (pred_class == val_targ).sum() / val_inp.shape[0]
             val_acc = balanced_accuracy_score(val_targ, pred_class)
 
     return run_loss / len(train_loader), val_loss, val_acc
@@ -49,7 +48,7 @@ def train(train_loader, val_loader, model, optimizer, loss_func):
 
 def main():
     # initialize things needed during train loop
-    train_dataset = YogaDataset('train_data', config.MODEL)
+    train_dataset = YogaDataset('train', config.MODEL)
     train_loader = DataLoader(
         train_dataset,
         config.BATCH_SIZE,
@@ -58,10 +57,10 @@ def main():
         num_workers=config.NUM_WORKERS
     )
 
-    val_dataset = YogaDataset('val_data', config.MODEL)
+    val_dataset = YogaDataset('val', config.MODEL)
     val_loader = DataLoader(
         val_dataset,
-        batch_size=len(os.listdir('val_data')),
+        batch_size=len(val_dataset),
         shuffle=False,
         pin_memory=True,
         num_workers=config.NUM_WORKERS
